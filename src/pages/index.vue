@@ -2,7 +2,7 @@
   <div class="min-h-screen flex flex-col">
     <Header />
     <main class="flex-grow">
-      <div class="container mx-auto px-4 py-8">
+      <div class="max-w-[1920px] mx-auto px-4 py-8">
         <InvoiceForm />
       </div>
     </main>
