@@ -3,15 +3,21 @@
       <nav class="container mx-auto px-4">
         <div class="flex justify-between items-center h-16">
           <div class="flex space-x-8">
-            <button class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+            <router-link 
+              to="/receipts" 
+              class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
               Receipts
-            </button>
+            </router-link>
             <button class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
               Design
             </button>
-            <button class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+            <router-link 
+              to="/history" 
+              class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
               History
-            </button>
+            </router-link>
           </div>
         </div>
       </nav>

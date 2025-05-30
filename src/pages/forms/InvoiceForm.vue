@@ -168,53 +168,15 @@
           </div>
         </div>
 
-        <!-- Add this before the Generate PDF button -->
-        <div class="mb-8">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-700">Saved Invoices</h2>
-            <button 
-              @click="saveInvoice"
-              class="px-4 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-md"
-            >
-              Save Current Invoice
-            </button>
-          </div>
-          
-          <div v-if="savedInvoices.length > 0" class="space-y-4">
-            <div v-for="invoice in savedInvoices" :key="invoice.id" 
-                 class="border rounded-lg p-4 hover:bg-gray-50">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-medium text-gray-900">
-                    {{ invoice.type === 'invoice' ? 'Invoice' : 'Quote' }} - {{ invoice.date }}
-                  </h3>
-                  <p class="text-sm text-gray-600">
-                    To: {{ invoice.to.clientName }}
-                  </p>
-                  <p class="text-sm text-gray-600">
-                    Total: ${{ invoice.total }}
-                  </p>
-                </div>
-                <div class="flex space-x-2">
-                  <button 
-                    @click="loadInvoice(invoice)"
-                    class="px-3 py-1 text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    Load
-                  </button>
-                  <button 
-                    @click="deleteInvoice(invoice.id)"
-                    class="px-3 py-1 text-sm text-red-600 hover:text-red-800"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else class="text-center text-gray-500 py-4">
-            No saved invoices yet
-          </div>
+        <!-- Save Invoice Button -->
+        <div class="flex justify-center mb-6">
+          <button 
+            @click="saveInvoice"
+            type="button"
+            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            Save Invoice
+          </button>
         </div>
 
         <!-- Generate PDF Button -->
@@ -242,19 +204,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import ConfirmForm from './confirm_form.vue'
 
+const router = useRouter()
 const formType = ref('invoice')
 const showConfirmation = ref(false)
-const savedInvoices = ref([])
-
-// Load saved invoices when component mounts
-onMounted(() => {
-  const saved = localStorage.getItem('savedInvoices')
-  if (saved) {
-    savedInvoices.value = JSON.parse(saved)
-  }
-})
 
 const formData = ref({
   date: new Date().toISOString().split('T')[0], // Today's date
@@ -476,7 +431,6 @@ const generatePDF = () => {
   printWindow.document.close()
 }
 
-// Save current invoice
 const saveInvoice = () => {
   const invoice = {
     id: Date.now(), // Unique ID based on timestamp
@@ -487,16 +441,14 @@ const saveInvoice = () => {
     items: formData.value.items.map(item => ({ ...item })),
     total: calculateTotal.value
   }
-  
-  savedInvoices.value.push(invoice)
-  localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices.value))
-  
-  // Reset form after saving
-  resetForm()
-}
 
-// Reset form to initial state
-const resetForm = () => {
+  // Save to localStorage
+  const saved = localStorage.getItem('savedInvoices')
+  let savedInvoices = saved ? JSON.parse(saved) : []
+  savedInvoices.push(invoice)
+  localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices))
+
+  // Optionally reset the form
   formData.value = {
     date: new Date().toISOString().split('T')[0],
     allowBackdate: false,
@@ -518,23 +470,25 @@ const resetForm = () => {
       }
     ]
   }
+
+  // Redirect to history with a success message
+  router.push({ path: '/history', query: { saved: '1' } })
 }
 
-// Load a saved invoice
-const loadInvoice = (invoice) => {
-  formType.value = invoice.type
-  formData.value = {
-    date: invoice.date,
-    allowBackdate: true,
-    from: { ...invoice.from },
-    to: { ...invoice.to },
-    items: invoice.items.map(item => ({ ...item }))
+onMounted(() => {
+  // Load invoice from sessionStorage if present
+  const loaded = sessionStorage.getItem('loadInvoice')
+  if (loaded) {
+    const invoice = JSON.parse(loaded)
+    formType.value = invoice.type
+    formData.value = {
+      date: invoice.date,
+      allowBackdate: true,
+      from: { ...invoice.from },
+      to: { ...invoice.to },
+      items: invoice.items.map(item => ({ ...item }))
+    }
+    sessionStorage.removeItem('loadInvoice')
   }
-}
-
-// Delete a saved invoice
-const deleteInvoice = (id) => {
-  savedInvoices.value = savedInvoices.value.filter(inv => inv.id !== id)
-  localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices.value))
-}
+})
 </script> 
