@@ -27,23 +27,37 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const savedInvoices = ref([])
 const showSuccess = ref(false)
 const route = useRoute()
 
-onMounted(() => {
+function loadInvoices() {
   const saved = localStorage.getItem('savedInvoices')
-  if (saved) {
-    savedInvoices.value = JSON.parse(saved)
-  }
+  savedInvoices.value = saved ? JSON.parse(saved) : []
+}
+
+onMounted(() => {
+  loadInvoices()
   if (route.query.saved === '1') {
     showSuccess.value = true
     setTimeout(() => { showSuccess.value = false }, 3000)
   }
 })
+
+// Watch for route changes (including query changes)
+watch(
+  () => route.fullPath,
+  () => {
+    loadInvoices()
+    if (route.query.saved === '1') {
+      showSuccess.value = true
+      setTimeout(() => { showSuccess.value = false }, 3000)
+    }
+  }
+)
 
 const loadInvoice = (invoice) => {
   sessionStorage.setItem('loadInvoice', JSON.stringify(invoice))
