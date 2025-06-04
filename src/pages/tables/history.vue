@@ -12,14 +12,18 @@
       No saved invoices yet
     </div>
     <div v-else>
-      <!-- Delete Selected Button -->
-      <div v-if="selectedIds.length > 0" class="mb-4 flex justify-end">
-        <button
-          @click="deleteSelected"
-          class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-        >
-          Delete Selected ({{ selectedIds.length }})
-        </button>
+      <!-- Top Bar for Actions -->
+      <div class="flex items-center justify-end mb-4 space-x-2" style="min-height: 44px;">
+        <template v-if="selectedIds.length > 0">
+          <button
+            @click="deleteSelected"
+            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            style="min-width: 140px;"
+          >
+            Delete Selected ({{ selectedIds.length }})
+          </button>
+        </template>
+        <!-- Add more buttons here in the future -->
       </div>
       <div
         class="overflow-y-auto"
