@@ -16,7 +16,7 @@
       <div class="flex items-center justify-end mb-4 space-x-2" style="min-height: 44px;">
         <template v-if="selectedIds.length > 0">
           <button
-            @click="deleteSelected"
+            @click="showDeleteModal = true"
             class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
             style="min-width: 140px;"
           >
@@ -55,22 +55,38 @@
           </div>
           <div class="flex space-x-4 mt-2">
             <button @click="loadInvoice(invoice)" class="text-blue-600 hover:underline">Load</button>
-            <button @click="deleteInvoice(invoice.id)" class="text-red-600 hover:underline">Delete</button>
+            <button @click="showSingleDeleteModal(invoice.id)" class="text-red-600 hover:underline">Delete</button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <Modal
+      v-model="showDeleteModal"
+      :title="deleteModalTitle"
+      @confirm="handleDeleteConfirm"
+    >
+      <p class="text-gray-700">
+        {{ deleteModalMessage }}
+      </p>
+    </Modal>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import Modal from '../modals/modals.vue'
 
 const savedInvoices = ref([])
 const showSuccess = ref(false)
 const route = useRoute()
 const selectedIds = ref([])
+const showDeleteModal = ref(false)
+const deleteModalTitle = ref('')
+const deleteModalMessage = ref('')
+const invoiceToDelete = ref(null)
 
 const sortedInvoices = computed(() => {
   // Sort by id (timestamp) descending
@@ -107,20 +123,32 @@ const loadInvoice = (invoice) => {
   window.location.href = '/receipts'
 }
 
-const deleteInvoice = (id) => {
-  if (confirm('Are you sure you want to delete this invoice?')) {
-    savedInvoices.value = savedInvoices.value.filter(inv => inv.id !== id)
-    localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices.value))
-    // Remove from selectedIds if present
-    selectedIds.value = selectedIds.value.filter(selectedId => selectedId !== id)
-  }
+const showSingleDeleteModal = (id) => {
+  invoiceToDelete.value = id
+  deleteModalTitle.value = 'Delete Invoice'
+  deleteModalMessage.value = 'Are you sure you want to delete this invoice?'
+  showDeleteModal.value = true
 }
 
-const deleteSelected = () => {
-  if (confirm(`Are you sure you want to delete ${selectedIds.value.length} selected invoice(s)?`)) {
+const handleDeleteConfirm = () => {
+  if (invoiceToDelete.value) {
+    // Single invoice deletion
+    savedInvoices.value = savedInvoices.value.filter(inv => inv.id !== invoiceToDelete.value)
+    selectedIds.value = selectedIds.value.filter(selectedId => selectedId !== invoiceToDelete.value)
+  } else {
+    // Multiple invoices deletion
     savedInvoices.value = savedInvoices.value.filter(inv => !selectedIds.value.includes(inv.id))
-    localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices.value))
     selectedIds.value = []
   }
+  localStorage.setItem('savedInvoices', JSON.stringify(savedInvoices.value))
+  invoiceToDelete.value = null
 }
+
+// Show delete modal for multiple invoices
+watch(showDeleteModal, (newValue) => {
+  if (newValue && !invoiceToDelete.value) {
+    deleteModalTitle.value = 'Delete Selected Invoices'
+    deleteModalMessage.value = `Are you sure you want to delete ${selectedIds.value.length} selected invoice(s)?`
+  }
+})
 </script>
