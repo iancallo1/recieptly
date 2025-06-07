@@ -10,10 +10,13 @@
               <h3 class="text-sm font-medium text-gray-700 mb-2">Basic Elements</h3>
               <div class="space-y-2">
                 <div class="element-item p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100">
-                  Text Block
+                  Header
                 </div>
                 <div class="element-item p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100">
                   Logo
+                </div>
+                <div class="element-item p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100">
+                  Footer
                 </div>
                 <div class="element-item p-2 bg-gray-50 rounded cursor-move hover:bg-gray-100">
                   QR Code
