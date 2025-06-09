@@ -23,7 +23,7 @@
             </div>
           </div>
         </div>
-      </aside>
+      </aside>  
       <!-- Main Canvas -->
       <section class="flex-1 p-8 flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">

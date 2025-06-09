@@ -40,7 +40,7 @@
         <div class="mb-8">
           <div class="flex items-center space-x-4">
             <div class="flex-1">
-              <label class="block text-sm font-medium text-gray-700">Date</label>
+              <label class="block text-sm font-medium text-gray-700">Date <span class="text-red-500">*</span></label>
               <input 
                 type="date" 
                 v-model="formData.date" 
@@ -69,15 +69,15 @@
             <h2 class="text-lg font-semibold mb-4 text-gray-700">From:</h2>
             <div class="space-y-4">
               <div>
-                <label for="business-name" class="block text-sm font-medium text-gray-700">Business Name</label>
+                <label for="business-name" class="block text-sm font-medium text-gray-700">Business Name <span class="text-red-500">*</span></label>
                 <input v-model="formData.from.businessName" type="text" id="business-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="Your Business Name" />
               </div>
               <div>
-                <label for="business-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <label for="business-email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
                 <input v-model="formData.from.email" type="email" id="business-email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="your@email.com" />
               </div>
               <div>
-                <label for="business-address" class="block text-sm font-medium text-gray-700">Address</label>
+                <label for="business-address" class="block text-sm font-medium text-gray-700">Address <span class="text-red-500">*</span></label>
                 <input v-model="formData.from.address" type="text" id="business-address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="Your Business Address" />
               </div>
             </div>
@@ -88,15 +88,15 @@
             <h2 class="text-lg font-semibold mb-4 text-gray-700">To:</h2>
             <div class="space-y-4">
               <div>
-                <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
+                <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name <span class="text-red-500">*</span></label>
                 <input v-model="formData.to.clientName" type="text" id="client-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="Client Name" />
               </div>
               <div>
-                <label for="client-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <label for="client-email" class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
                 <input v-model="formData.to.email" type="email" id="client-email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="client@email.com" />
               </div>
               <div>
-                <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
+                <label for="client-address" class="block text-sm font-medium text-gray-700">Address <span class="text-red-500">*</span></label>
                 <input v-model="formData.to.address" type="text" id="client-address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 sm:text-sm" placeholder="Client Address" />
               </div>
             </div>
@@ -110,9 +110,9 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-100">
                 <tr>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description <span class="text-red-500">*</span></th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity <span class="text-red-500">*</span></th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate <span class="text-red-500">*</span></th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                   <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 </tr>
@@ -173,7 +173,8 @@
           <button 
             @click="saveInvoice"
             type="button"
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            :disabled="!isFormValid"
+            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Invoice
           </button>
@@ -184,7 +185,8 @@
           <button 
             @click="confirmGeneratePDF" 
             type="button" 
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            :disabled="!isFormValid"
+            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Generate {{ formType === 'invoice' ? 'Invoice' : 'Quote' }}
           </button>
@@ -234,6 +236,26 @@ const formData = ref({
 })
 
 const taxRate = ref(0)
+
+const isFormValid = computed(() => {
+  // Check if all required fields are filled
+  const isFromValid = formData.value.from.businessName.trim() !== '' &&
+                     formData.value.from.email.trim() !== '' &&
+                     formData.value.from.address.trim() !== ''
+
+  const isToValid = formData.value.to.clientName.trim() !== '' &&
+                   formData.value.to.email.trim() !== '' &&
+                   formData.value.to.address.trim() !== ''
+
+  // Check if all items have required fields filled
+  const areItemsValid = formData.value.items.every(item => 
+    item.description.trim() !== '' && 
+    item.quantity > 0 && 
+    item.rate > 0
+  )
+
+  return isFromValid && isToValid && areItemsValid
+})
 
 const calculateItemTotal = (item) => {
   return ((item.quantity || 0) * (item.rate || 0)).toFixed(2)
